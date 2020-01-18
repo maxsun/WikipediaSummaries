@@ -4,25 +4,33 @@ import json
 from datetime import datetime
 import pandas as pd
 import random
+from make_readme import build_readme
 
 from requests.exceptions import ConnectionError
 from wikipedia.exceptions import PageError, DisambiguationError
 
 def save(page_data):
-    pd.DataFrame.from_dict(page_data).to_json(
+    df = pd.DataFrame.from_dict(page_data, orient='index')
+    df['doa'] = df['doa'].apply(lambda x: x.timestamp())
+    df.to_json(
         path_or_buf='./wiki.json.gz',
-        compression='gzip')
-    print('Saved', len(page_data), ' pages.')
+        compression='gzip',
+        )
+    build_readme(page_data)
+    print('Saved', len(page_data), 'pages.')
 
 def load():
     try:
-        return pd.read_json('./wiki.json.gz', compression='gzip').to_dict()
+        df = pd.read_json('./wiki.json.gz', compression='gzip', orient='columns', convert_dates=False)
+        df['doa'] = df['doa'].apply(lambda x: datetime.utcfromtimestamp(x))
+        return df.to_dict(orient='index')
     except FileNotFoundError:
         print('Starting with new data.')
         return {}
 
 
 page_data = load()
+
 queue = ['Cognitive Science']
 MAX_ADDITIONS = 1000
 num_additions = 0
@@ -41,7 +49,7 @@ while num_additions < MAX_ADDITIONS:
                 'summary': page.summary,
                 'links': page.links,
                 'url': page.url,
-                'doa': datetime.utcnow().strftime("%m/%d/%Y, %H:%M")
+                'doa': datetime.utcnow() #.strftime("%m/%d/%Y, %H:%M")
             }
             links = page.links
             print('Read:', page.title)
