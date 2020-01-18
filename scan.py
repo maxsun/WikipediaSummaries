@@ -1,4 +1,4 @@
-from typing import Dict, List
+
 import wikipedia
 import json
 from datetime import datetime
@@ -8,13 +8,13 @@ import random
 from requests.exceptions import ConnectionError
 from wikipedia.exceptions import PageError, DisambiguationError
 
-def save(page_data: Dict[str, Dict]) -> None:
+def save(page_data):
     pd.DataFrame.from_dict(page_data).to_json(
         path_or_buf='./wiki.json.gz',
         compression='gzip')
     print('Saved', len(page_data), ' pages.')
 
-def load() -> Dict:
+def load():
     try:
         return pd.read_json('./wiki.json.gz', compression='gzip').to_dict()
     except FileNotFoundError:
@@ -22,10 +22,10 @@ def load() -> Dict:
         return {}
 
 
-page_data: Dict[str, Dict] = load()
-queue: List[str] = ['Cognitive Science']
-MAX_ADDITIONS: int = 1000
-num_additions: int = 0
+page_data = load()
+queue = ['Cognitive Science']
+MAX_ADDITIONS = 1000
+num_additions = 0
 
 while num_additions < MAX_ADDITIONS:
     try:
@@ -46,6 +46,10 @@ while num_additions < MAX_ADDITIONS:
             links = page.links
             print('Read:', page.title)
             num_additions += 1
+
+            if num_additions % 10 == 0:
+                print('Saving at checkpoint, after', num_additions, 'pages.')
+                save(page_data)
 
         except ConnectionError as e:
             print('Lost connection while reading:', title)
