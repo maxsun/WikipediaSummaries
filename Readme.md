@@ -17,12 +17,12 @@ This repo contains code for scanning Wikipedia and recording article summaries a
 
 `wiki.json.gz` contains the currently collected data.
 Most recently calculated stats:
-- Contains 5 summaries.
-- Contains 1673 links.
-- 0.002988643156007173%% of the known graph has been scanned.
-- The most recently read article is "Alan Turing".
-- The articles with the most scanned links are: Cognitive Science.
-- The average age of each scan is 0 days 00:00:06.534819.
+- Contains 16985 summaries.
+- Contains 858136 links.
+- 0.019792899959913113% of the known graph has been scanned.
+- The most recently read article is "Relative clause".
+- The articles with the most scanned links are: Neural Darwinism.
+- The average age of each scan is 1 days 08:39:14.100360.
 
 `python make_readme.py` will rebuild this Readme and update the stats.
 
